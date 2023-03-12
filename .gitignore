@@ -1,0 +1,6 @@
+SimpleStorage/.vscode
+SimpleStorage/node_modules
+
+.env
+*.abi
+*.bin
