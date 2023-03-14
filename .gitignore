@@ -4,3 +4,6 @@ SimpleStorage/node_modules
 .env
 *.abi
 *.bin
+
+.vscode
+node_modules
