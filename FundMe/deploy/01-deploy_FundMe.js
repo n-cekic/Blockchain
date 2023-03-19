@@ -1,7 +1,6 @@
 const { network } = require("hardhat")
 const { networkConfig, developmentChains } = require("../helper_hardhat_config")
-
-
+const { verify } = require("../utils/verify")
 
 async function deploy(hre) {
     const { getNamedAccounts, deployments } = hre
@@ -22,6 +21,11 @@ async function deploy(hre) {
         log: true,
         args: [ethToUSDAddress]
     })
+
+    console.log(process.env.ETHERSCAN_API_KEY)
+    if(!developmentChains.includes(chainName) && process.env.ETHERSCAN_API_KEY) {
+        await verify(fundMe.address, [ethToUSDAddress])
+    }
 
     console.log("----------------------------------------")
 }
