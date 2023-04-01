@@ -57,8 +57,8 @@ describe("FundMe", function () {
 
             const transactionResponse = await fundMe.withdraw()
             const transactionReceipt = await transactionResponse.wait(1)
-            
-            const {gasUsed, effectiveGasPrice} = transactionReceipt
+
+            const { gasUsed, effectiveGasPrice } = transactionReceipt
             const gasCost = gasUsed.mul(effectiveGasPrice)
 
             const endContractBalance = await fundMe.provider.getBalance(
@@ -73,6 +73,50 @@ describe("FundMe", function () {
                 startingContractBalance.add(startingDeployerBalance).toString(),
                 endDeployerBalance.add(gasCost).toString()
             )
+        })
+        it("withdraw ETH after multiple funders", async function () {
+            const accounts = await ethers.getSigners()
+            for (i = 1; i < 6; i++) {
+                const fundMeConnectedContract = await fundMe.connect(
+                    accounts[i]
+                )
+                await fundMeConnectedContract.fund({ value: sendValue })
+            }
+            const startingFundMeBalance = await fundMe.provider.getBalance(
+                fundMe.address
+            )
+            const startingDeployerBalance = await fundMe.provider.getBalance(
+                deployer
+            )
+
+            // Act
+            const transactionResponse = await fundMe.cheaperWithdraw()
+            // Let's comapre gas costs :)
+            // const transactionResponse = await fundMe.withdraw()
+            const transactionReceipt = await transactionResponse.wait()
+            const { gasUsed, effectiveGasPrice } = transactionReceipt
+            const withdrawGasCost = gasUsed.mul(effectiveGasPrice)
+
+            const endingFundMeBalance = await fundMe.provider.getBalance(
+                fundMe.address
+            )
+            const endingDeployerBalance = await fundMe.provider.getBalance(
+                deployer
+            )
+            // Assert
+            assert.equal(
+                startingFundMeBalance.add(startingDeployerBalance).toString(),
+                endingDeployerBalance.add(withdrawGasCost).toString()
+            )
+            // Make a getter for storage variables
+            await expect(fundMe.getFunder(0)).to.be.reverted
+
+            for (i = 1; i < 6; i++) {
+                assert.equal(
+                    await fundMe.getAddressToAmountFunded(accounts[i].address),
+                    0
+                )
+            }
         })
     })
 })
