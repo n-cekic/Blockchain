@@ -1,5 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox")
 require("hardhat-deploy")
+require("@nomiclabs/hardhat-ethers");
 require("dotenv").config()
 
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL
