@@ -1,8 +1,11 @@
 const { assert, expect } = require("chai")
 const { deployments, ethers, getNamedAccounts } = require("hardhat")
+const { sortAndDeduplicateDiagnostics } = require("typescript")
 
 describe("FundMe", function () {
     let fundMe, deployer, mockV3Aggregator
+    const sendValue = "100000000000000000" //ethers.utils.parseEther("1")
+
     this.beforeEach(async function () {
         deployer = (await getNamedAccounts()).deployer
         await deployments.fixture(["all"])
@@ -23,6 +26,12 @@ describe("FundMe", function () {
     describe("fund", async function () {
         it("tests for sufficient funds", async function () {
             await expect(fundMe.fund()).to.be.reverted
+        })
+        it("update the amount funded data structure", async function () {
+            await fundMe.fund({ value: sendValue })
+
+            const resp = await fundMe.getAddressToAmountFunded(deployer)
+            assert.equal(resp.toString(), sendValue.toString())
         })
     })
 })
