@@ -6,6 +6,7 @@ const {
     EndOfLineState,
 } = require("typescript")
 
+const { developmentChains } = require("../../helper_hardhat_config")
 !developmentChains.includes(network.name)
     ? describe.skip
     : describe("FundMe", function () {
