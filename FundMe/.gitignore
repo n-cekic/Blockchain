@@ -7,6 +7,7 @@ typechain-types
 deployments
 package-lock.json
 yarn-error.log
+gas_reporter.txt
 
 # Hardhat files
 cache
