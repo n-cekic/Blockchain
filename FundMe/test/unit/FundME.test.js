@@ -118,5 +118,11 @@ describe("FundMe", function () {
                 )
             }
         })
+        it("only allows owner to withdraw", async function () {
+            const accounts = await ethers.getSigners()
+            const attacker = accounts[1]
+            const fundMeConnectedContract = await fundMe.connect(attacker)
+            await expect(fundMeConnectedContract.withdraw()).to.be.reverted
+        })
     })
 })
