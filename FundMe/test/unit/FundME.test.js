@@ -122,7 +122,12 @@ describe("FundMe", function () {
             const accounts = await ethers.getSigners()
             const attacker = accounts[1]
             const fundMeConnectedContract = await fundMe.connect(attacker)
-            await expect(fundMeConnectedContract.withdraw()).to.be.reverted
+            await expect(
+                fundMeConnectedContract.withdraw()
+            ).to.be.revertedWithCustomError(
+                fundMeConnectedContract,
+                "FundMe__NotOwner"
+            )
         })
     })
 })
